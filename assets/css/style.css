@@ -33,6 +33,7 @@
     text-align: left;
     border-bottom: solid gray;
     padding-bottom: 20px;
+    visibility: hidden;
 }
 
 .quiz-option-list {

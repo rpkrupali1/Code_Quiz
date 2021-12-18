@@ -2,6 +2,18 @@ var timerEl = document.querySelector("#timer");
 var startQuizEl = document.querySelector("#quiz-start-btn");
 var quizMemoEl = document.querySelector("#quiz_memo");
 var mainEl = document.querySelector(".page-content");
+var quiz = document.querySelector(".quiz-header");
+var timeleft;
+var userAnswer;
+var questionNum = 0;
+
+var listItemEl = document.createElement("ol");
+listItemEl.className = "quiz-options";
+mainEl.appendChild(listItemEl);
+var answerEl = document.createElement("h2");
+answerEl.className = "answer";
+
+
 var quizSet = [{
     question:"Commonly used data types DO NOT include:",
     Options: ["strings","booleans","alert","numbers"],
@@ -29,9 +41,14 @@ var quizSet = [{
 }
 ];
 
+
+
 var countdown = function(event){
     event.preventDefault();
-    var timeleft = 75;    
+    clearQuizMemo();
+    provideQuiz(questionNum);
+
+    timeleft = 75;
     var timeInterval = setInterval(function(){
         if(timeleft > 0){
             timerEl.textContent = timeleft;
@@ -42,47 +59,59 @@ var countdown = function(event){
             timeInterval.textContent = 0;
         }
     },1000);
-    quiz();
+    //quiz();
 };
 
-function quiz(){
+var quizHandler = function(event){
+    i = 1;
+    while (i < quizSet.length) {
+        provideQuiz(i);
+        if(userAnswer){
+            validateAnswer(i,userAnswer);
+            i++;
+            continue;
+        }
+    }
+
+};
+
+function clearQuizMemo(){
     startQuizEl.remove();
     quizMemoEl.remove();
-    var quiz = document.querySelector(".quiz-header");
-    quiz.textContent = quizSet[0].question;
+}
 
-    var listItemEl = document.createElement("ol");
-    listItemEl.className = "quiz-options";
+function provideQuiz(questionNum){
+    quiz.textContent = quizSet[questionNum].question;
+    listItemEl.style.visibility='visible';
     var options = "";
-    for (let i = 0; i < quizSet[0].Options.length; i++) {
-        options = options+ "<li class='quiz-option-list'><button class='quiz-option-btn'>" + quizSet[0].Options[i] + "</button></li>";
+    for (let i = 0; i < quizSet[questionNum].Options.length; i++) {
+        options = options + "<li class='quiz-option-list'><button class='quiz-option-btn'>" + quizSet[questionNum].Options[i] + "</button></li>";
     }
     listItemEl.innerHTML = options;
-    mainEl.appendChild(listItemEl);
 }
 
-var validateAnswer = function(event){
-    var selectedAnswerEl = event.target;
-    var answer;
-    if(selectedAnswerEl.matches(".quiz-option-btn")){
-        selectedAnswerEl.style.background = "plum";
-        answer = selectedAnswerEl.textContent;
-        checkAnswer(answer)
-    }
-}
-
-var checkAnswer = function(answer){
-    var answerEl = document.createElement("h2");
-    answerEl.className = "answer";
-    if(answer===quizSet[0].answer){
+var validateAnswer = function(questionnum,answer){
+    if(answer===quizSet[questionnum].answer){
         answerEl.textContent = "Correct!";
     }
     else
         answerEl.textContent = "Wrong!";
     mainEl.appendChild(answerEl);
+    questionNum++;
+    if(questionNum<quizSet.length){
+        provideQuiz(questionNum);
+    }
+
 }
 
-//var optionSelectedEl = document.querySelector(".quiz-option-btn");
+var getAnswer = function(event){
+    var selectedAnswerEl = event.target;
+    if(selectedAnswerEl.matches(".quiz-option-btn")){
+        selectedAnswerEl.style.background = "plum";
+        userAnswer = selectedAnswerEl.textContent;
+    }
+    validateAnswer(questionNum,userAnswer);
+}
 
 startQuizEl.addEventListener("click",countdown);
-mainEl.addEventListener("click",validateAnswer);
+listItemEl.addEventListener("click",getAnswer);
