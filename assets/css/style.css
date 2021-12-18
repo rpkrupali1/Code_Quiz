@@ -1,0 +1,57 @@
+.page-title {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.countdown {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.page-content {
+    margin: auto;
+    height: 100px;
+    width: 40%;
+    text-align: center;
+}
+
+.quiz-header {
+    margin-bottom: 5px;
+}
+
+#quiz-start-btn {
+    margin-top: 5px;
+    background-color: plum;
+    text-align: center;
+    color: aliceblue;
+}
+
+.quiz-options {
+    text-align: left;
+    border-bottom: solid gray;
+    padding-bottom: 20px;
+}
+
+.quiz-option-list {
+    margin-left: 10px;
+}
+
+.quiz-option-btn {
+    background-color: purple;
+    color: white;
+    font-size: medium;
+    margin: 5px;
+}
+
+.quiz-option-btn:hover {
+    background-color: plum;
+}
+
+.answer {
+    color: gray;
+    font-style: italic;
+    text-align: left;
+}
