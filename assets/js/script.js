@@ -69,10 +69,10 @@ var countdown = function(event){
         }
         else {
             clearInterval(timeInterval)
-            timeInterval.textContent = 0;
+            timerEl.textContent = 0;
+            endQuiz();
         }
     },1000);
-    //quiz();
 };
 
 var quizHandler = function(event){
@@ -117,8 +117,11 @@ var validateAnswer = function(questionnum,answer){
         answerEl.textContent = "Correct!";
         score = score + 5;
     }
-    else
+    else {
         answerEl.textContent = "Wrong!";
+        timeleft = timeleft -10;
+
+    }
     mainEl.appendChild(answerEl);
     questionNum++;
     if(questionNum<quizSet.length){
@@ -126,20 +129,6 @@ var validateAnswer = function(questionnum,answer){
     }
     else
         endQuiz();
-    saveScore();
-}
-
-var saveScore = function() {
-    if (!localStorage.getItem("score")){
-        highScores = score;
-        localStorage.setItem("score",score);
-    }
-    highScores = localStorage.getItem("score");
-
-    if(score > highScores){
-        localStorage.setItem("score",score);
-        highScores = score;
-    }
 }
 
 var getAnswer = function(event){
@@ -151,13 +140,39 @@ var getAnswer = function(event){
     validateAnswer(questionNum,userAnswer);
 }
 
+var getHighScore = function(initial) {
+    var scoreObj = {
+        initial: initial,
+        score: score
+    };
+    var localScoreObj = JSON.parse(window.localStorage.getItem("score")) || [];
+    localScoreObj.push(scoreObj);
+    window.localStorage.setItem("score",JSON.stringify(localScoreObj));
+    localScoreObj.sort(function(a, b){return b.score - a.score});
+
+    for (let i = 0; i < localScoreObj.length; i++) {
+        if(localScoreObj[i].initial===initial){
+            highestScore = localScoreObj[i].score;
+            break;
+        }
+    }
+}
+
 var highScores = function(event){
     var initial = initialsEl.querySelector("input").value;
+
+    // check if initials are empty (validate)
+    if (!initial) {
+        alert("You need to enter initials!");
+        return false;
+    }
+
+    getHighScore(initial);
     scoreEl.remove();
     initialsEl.remove();
     quizHeader.textContent = "HighScores"
 
-    highScoresEl.textContent = initial + " - " + highScores ;
+    highScoresEl.textContent = initial + " - " + highestScore ;
 
     var buttonGobackEl = document.createElement("button");
     buttonGobackEl.className = "quiz-option-btn";
@@ -175,22 +190,9 @@ var highScores = function(event){
     mainEl.appendChild(highScoresEl);
     mainEl.appendChild(buttonsEl)
 }
+
 var setPage = function(){
-    initialsEl.remove();
-    buttonsEl.remove();
-    highScoresEl.remove();
-    quizHeader.textContent = "Coding Quiz Challenge";
-
-    var quizMemoEl = document.createElement("h4")
-    quizMemoEl.id = "quiz_memo";
-    quizMemoEl.textContent = "Try to Answer following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your scoretime by ten seconds.";
-
-    startQuizEl = document.createElement("button");
-    startQuizEl.id = "quiz-start-btn"
-    startQuizEl.textContent = " Start Quiz";
-
-    mainEl.appendChild(quizMemoEl);
-    mainEl.appendChild(startQuizEl);
+    window.location.reload();
 }
 
 var highScoreHandler = function(event){
