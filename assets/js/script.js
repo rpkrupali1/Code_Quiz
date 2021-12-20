@@ -128,7 +128,8 @@ var validateAnswer = function(questionnum,answer){
         provideQuiz(questionNum);
     }
     else
-        endQuiz();
+    timeleft=0;
+        //endQuiz();
 }
 
 var getAnswer = function(event){
