@@ -2,17 +2,32 @@ var timerEl = document.querySelector("#timer");
 var startQuizEl = document.querySelector("#quiz-start-btn");
 var quizMemoEl = document.querySelector("#quiz_memo");
 var mainEl = document.querySelector(".page-content");
-var quiz = document.querySelector(".quiz-header");
+var quizHeader = document.querySelector(".quiz-header");
 var timeleft;
 var userAnswer;
 var questionNum = 0;
-
+var scoreEl = document.createElement("p");
+scoreEl.className = "score";
 var listItemEl = document.createElement("ol");
 listItemEl.className = "quiz-options";
 mainEl.appendChild(listItemEl);
+var score = 0;
+
 var answerEl = document.createElement("h2");
 answerEl.className = "answer";
 
+var initialsEl = document.createElement("div");
+initialsEl.className = "initials";
+initialsEl.innerHTML = "<p>Enter initials:</p><input type='text' placeholder='your initials'/><button type='submit' class='initials-submit'>Submit</button>"
+
+var buttonsEl = document.createElement("div");
+buttonsEl.style.textAlign = "left";
+buttonsEl.id = "div-btn-highscore"
+
+var highScoresEl = document.createElement("p")
+highScoresEl.className = "highscores";
+
+var highestScore;
 
 var quizSet = [{
     question:"Commonly used data types DO NOT include:",
@@ -40,8 +55,6 @@ var quizSet = [{
     answer: "curly brackets"
 }
 ];
-
-
 
 var countdown = function(event){
     event.preventDefault();
@@ -72,7 +85,6 @@ var quizHandler = function(event){
             continue;
         }
     }
-
 };
 
 function clearQuizMemo(){
@@ -81,7 +93,7 @@ function clearQuizMemo(){
 }
 
 function provideQuiz(questionNum){
-    quiz.textContent = quizSet[questionNum].question;
+    quizHeader.textContent = quizSet[questionNum].question;
     listItemEl.style.visibility='visible';
     var options = "";
     for (let i = 0; i < quizSet[questionNum].Options.length; i++) {
@@ -90,9 +102,20 @@ function provideQuiz(questionNum){
     listItemEl.innerHTML = options;
 }
 
+var endQuiz = function(){
+    clearInterval();
+    listItemEl.remove();
+    answerEl.remove()
+    quizHeader.textContent = "All Done!";
+    scoreEl.textContent = "Your final score is "+ score + "."
+    mainEl.appendChild(scoreEl);
+    mainEl.appendChild(initialsEl);
+}
+
 var validateAnswer = function(questionnum,answer){
     if(answer===quizSet[questionnum].answer){
         answerEl.textContent = "Correct!";
+        score = score + 5;
     }
     else
         answerEl.textContent = "Wrong!";
@@ -101,7 +124,22 @@ var validateAnswer = function(questionnum,answer){
     if(questionNum<quizSet.length){
         provideQuiz(questionNum);
     }
+    else
+        endQuiz();
+    saveScore();
+}
 
+var saveScore = function() {
+    if (!localStorage.getItem("score")){
+        highScores = score;
+        localStorage.setItem("score",score);
+    }
+    highScores = localStorage.getItem("score");
+
+    if(score > highScores){
+        localStorage.setItem("score",score);
+        highScores = score;
+    }
 }
 
 var getAnswer = function(event){
@@ -113,5 +151,60 @@ var getAnswer = function(event){
     validateAnswer(questionNum,userAnswer);
 }
 
+var highScores = function(event){
+    var initial = initialsEl.querySelector("input").value;
+    scoreEl.remove();
+    initialsEl.remove();
+    quizHeader.textContent = "HighScores"
+
+    highScoresEl.textContent = initial + " - " + highScores ;
+
+    var buttonGobackEl = document.createElement("button");
+    buttonGobackEl.className = "quiz-option-btn";
+    buttonGobackEl.textContent = "Go Back";
+    buttonGobackEl.id = "go-back";
+
+    var buttonClearHighscores = document.createElement("button");
+    buttonClearHighscores.className = "quiz-option-btn";
+    buttonClearHighscores.textContent = "Clear HighScores";
+    buttonClearHighscores.id = "clear-highscore";
+
+    buttonsEl.appendChild(buttonGobackEl);
+    buttonsEl.appendChild(buttonClearHighscores);
+
+    mainEl.appendChild(highScoresEl);
+    mainEl.appendChild(buttonsEl)
+}
+var setPage = function(){
+    initialsEl.remove();
+    buttonsEl.remove();
+    highScoresEl.remove();
+    quizHeader.textContent = "Coding Quiz Challenge";
+
+    var quizMemoEl = document.createElement("h4")
+    quizMemoEl.id = "quiz_memo";
+    quizMemoEl.textContent = "Try to Answer following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your scoretime by ten seconds.";
+
+    startQuizEl = document.createElement("button");
+    startQuizEl.id = "quiz-start-btn"
+    startQuizEl.textContent = " Start Quiz";
+
+    mainEl.appendChild(quizMemoEl);
+    mainEl.appendChild(startQuizEl);
+}
+
+var highScoreHandler = function(event){
+    var targetEl = event.target;
+    if(targetEl.matches("#go-back")){
+        setPage();
+    }
+    else if(targetEl.matches("#clear-highscore")){
+        highScores = 0;
+        localStorage.setItem("score",highScores);
+    }
+}
+
 startQuizEl.addEventListener("click",countdown);
 listItemEl.addEventListener("click",getAnswer);
+initialsEl.querySelector("button").addEventListener("click", highScores);
+buttonsEl.addEventListener("click", highScoreHandler);
