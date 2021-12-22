@@ -24,8 +24,8 @@ answerEl.className = "answer";
 // initials element
 var initialsEl = document.createElement("div");
 initialsEl.className = "initials";
-initialsEl.innerHTML = "<p>Enter initials:</p><input type='text' placeholder='your initials'/><button type='submit' class='initials-submit'>Submit</button>"
-
+//initialsEl.innerHTML = "<p>Enter initials:</p><input type='text' placeholder='your initials'/><button type='submit' class='initials-submit'>Submit</button>"
+initialsEl.innerHTML = "<p>Enter initials:</p><form id='form'><div class='form-grp'><input type='text' placeholder='your initials'/></div><div class='form-grp'><button type='submit' class='initials-submit'>Submit</button></div></form>"
 //parent element to store buttons go back and clear highscore
 var buttonsEl = document.createElement("div");
 buttonsEl.style.textAlign = "left";

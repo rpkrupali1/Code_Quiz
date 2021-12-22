@@ -87,3 +87,8 @@
     font-size: 20px;
     padding-left: 5px;
 }
+
+#form {
+    display: flex;
+    flex-wrap: wrap;
+}
