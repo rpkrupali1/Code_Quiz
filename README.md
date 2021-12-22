@@ -18,7 +18,7 @@ The following animation demonstrates the application functionality.
 * client side storage
 
 ## Website
-https://rpkrupali1.github.io/code_quiz/
+https://rpkrupali1.github.io/Code_Quiz/
 
 ## Contribution
 Made by Krupali
